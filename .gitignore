@@ -54,6 +54,10 @@ inspect_evals/
 /tests/*
 !/tests/test_skillbench_setup.py
 !/tests/contract/
+!/tests/backends/
+!/tests/agents/
+/tests/agents/*
+!/tests/agents/trainers/
 
 # Root-level artifacts
 /*.json
