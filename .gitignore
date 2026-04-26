@@ -57,6 +57,7 @@ inspect_evals/
 !/tests/backends/
 !/tests/benchmarks/
 !/tests/engine/
+!/tests/runtime/
 !/tests/agents/
 /tests/agents/*
 !/tests/agents/trainers/

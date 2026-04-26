@@ -1,0 +1,6 @@
+# Keep the build context tight — this image must NEVER bake workspace code.
+# Only the files the Dockerfile explicitly COPYs need to be present.
+*
+!Dockerfile
+!entrypoint.py
+!ptxas-blackwell-fix.sh
