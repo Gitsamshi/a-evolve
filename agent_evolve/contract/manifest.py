@@ -8,7 +8,8 @@ from pathlib import Path
 import yaml
 
 
-CURRENT_CONTRACT_VERSION = "1.0"
+CURRENT_CONTRACT_VERSION = "1.2"
+SUPPORTED_CONTRACT_VERSIONS: frozenset[str] = frozenset({"1.0", "1.1", "1.2"})
 
 
 @dataclass
@@ -21,10 +22,18 @@ class Manifest:
 
     # Agent entrypoint: Python dotted path to a BaseAgent subclass
     entrypoint: str | None = None
-    agent_type: str = "reference"  # "reference" | "custom"
+    agent_type: str = "reference"  # "reference" | "custom" | "trainer"
 
     evolvable_layers: list[str] = field(default_factory=lambda: ["prompts", "skills", "memory"])
     reload_strategy: str = "hot"  # "hot" | "cold"
+
+    # Training workspaces (contract_version >= 1.1): docker image + verb args.
+    training: dict | None = None
+
+    # Procedure-based recipes (contract_version >= 1.2): named recipe entry
+    # points and primitive imports. Replaces the coarse evolvable_layers
+    # declaration for trainer workspaces.
+    procedures: dict | None = None
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> Manifest:
@@ -40,10 +49,12 @@ class Manifest:
             agent_type=agent_block.get("type", "reference"),
             evolvable_layers=raw.get("evolvable_layers", ["prompts", "skills", "memory"]),
             reload_strategy=raw.get("reload_strategy", "hot"),
+            training=raw.get("training"),
+            procedures=raw.get("procedures"),
         )
 
     def to_dict(self) -> dict:
-        return {
+        out: dict = {
             "name": self.name,
             "version": self.version,
             "contract_version": self.contract_version,
@@ -54,6 +65,11 @@ class Manifest:
             "evolvable_layers": self.evolvable_layers,
             "reload_strategy": self.reload_strategy,
         }
+        if self.training is not None:
+            out["training"] = self.training
+        if self.procedures is not None:
+            out["procedures"] = self.procedures
+        return out
 
     def save(self, path: str | Path) -> None:
         with open(path, "w") as f:
