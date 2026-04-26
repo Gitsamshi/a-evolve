@@ -55,6 +55,8 @@ inspect_evals/
 !/tests/test_skillbench_setup.py
 !/tests/contract/
 !/tests/backends/
+!/tests/benchmarks/
+!/tests/engine/
 !/tests/agents/
 /tests/agents/*
 !/tests/agents/trainers/

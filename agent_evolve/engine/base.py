@@ -27,6 +27,13 @@ class EvolutionEngine(ABC):
     The engine is free to mutate the workspace however it sees fit.
     """
 
+    # When True, the engine drives solve()+evaluate itself (e.g. training
+    # engines that do one docker-run per cycle) and emits a real score via
+    # ``StepResult.metadata["training_score"]``. The outer EvolutionLoop
+    # then surfaces that score into ``score_history``. Subclasses that do
+    # per-task evaluation leave this False (the default).
+    manages_own_evaluation: bool = False
+
     @abstractmethod
     def step(
         self,
